@@ -1,17 +1,43 @@
-// alert("Casbin.js is running!")
-
-console.log("1")
-var cookies = document.cookie.split(';');
-for (var i = 0; i < cookies.length; ++i) {
-    item = cookies[i].split('=');
-    console.log(`${item[0]}: ${item[1]}`);
+function setCookie(name,value)
+{
+    var Days = 30;
+    var exp = new Date();
+    exp.setTime(exp.getTime() + Days*24*60*60*1000);
+    document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
 }
 
-// window.document.onload = function() {
-//     console.log("2")
-//     var cookies = document.cookie.split(';');
-//     for (var i = 0; i < cookies.length; ++i) {
-//         item = cookies[i].split('=');
-//         console.log(`${item[0]}: ${item[1]}`);
-//     }
-// }
+function getCookie(name)
+{
+    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+    if(arr=document.cookie.match(reg))
+        return unescape(arr[2]);
+    else
+        return null;
+}
+
+function delCookie(name)
+{
+    var exp = new Date();
+    exp.setTime(exp.getTime() - 1);
+    var cval=getCookie(name);
+    if(cval!=null)
+        document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+}
+
+function alice() {
+    setCookie('CasbinSubject', 'alice');
+    alert("alice");
+}
+
+function bob() {
+    setCookie('CasbinSubject', 'bob');
+    alert('bob');
+}
+
+function anonymous() {
+    delCookie('CasbinSubject');
+    alert('Anonymous');
+}
+
+console.log(`CasbinSubject: ${getCookie('CasbinSubject')}`);
+console.log(`CasbinPolicies: ${getCookie('CasbinPolicies')}`);

@@ -2,6 +2,12 @@ const express = require('express');
 const casbin = require('casbin');
 const cookieParser = require('cookie-parser');
 
+
+//https://stackoverflow.com/questions/51535455/express-js-use-async-function-on-requests
+const asyncMiddleware = fn => (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+}
+
 (async () => {
     const enforcer = await casbin.newEnforcer('model.conf', 'policy.csv');
     
@@ -16,33 +22,31 @@ const cookieParser = require('cookie-parser');
       console.log(false)
     }
 
+    console.log(await enforcer.getAllSubjects());
+    console.log(await enforcer.getFilteredPolicy(0, 'alice')) // [ [ 'alice', 'data1', 'read' ] ]
+
+    
     const app = express();
     const port = 3000;
     app.use(cookieParser());
-    app.use(function (req, res, next) {
-        var cookie = req.cookies['123123'];
-        console.log(cookie)
-        if (cookie === undefined)
-        {
-            // no: set a new cookie
-            var value = "TestCookieValue";
-            res.cookie('123123', value, {maxAge: 1000});
-            console.log('cookie created successfully');
-        } 
-        else
-        {
-            // yes, cookie was already present 
-            console.log('cookie exists', cookie);
-        } 
+    app.use(asyncMiddleware(async function (req, res, next) {
+        var subject = req.cookies['CasbinSubject'];
+        var policies;
+        if (subject) {
+            policies = await enforcer.getFilteredPolicy(0, subject)
+            console.log(`${subject}: ${policies}`);
+        } else {
+            console.log("No related policies.")
+        }
+        res.cookie('CasbinPolicies', policies, {maxAge: 1000});
         next(); 
-    })
+    }))
     app.use(express.static(__dirname + '/public'));
-
-
 
     app.get('/', (req, res) => {
         res.sendFile('index.html')
     });
 
     app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+    
 })();
