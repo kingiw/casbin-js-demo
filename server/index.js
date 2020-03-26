@@ -24,7 +24,6 @@ const asyncMiddleware = fn => (req, res, next) => {
 
     console.log(await enforcer.getAllSubjects());
     console.log(await enforcer.getFilteredPolicy(0, 'alice')) // [ [ 'alice', 'data1', 'read' ] ]
-
     
     const app = express();
     const port = 3000;
@@ -32,13 +31,26 @@ const asyncMiddleware = fn => (req, res, next) => {
     app.use(asyncMiddleware(async function (req, res, next) {
         var subject = req.cookies['CasbinSubject'];
         var policies;
+        var cookieValue;
         if (subject) {
-            policies = await enforcer.getFilteredPolicy(0, subject)
+            policies = await enforcer.getFilteredPolicy(0, subject);
+
+            // Convert the policies into another format
+            // [alice,data1,read] => {"read":[data1]}
+            cookieValue = {};
+            for (var i = 0; i < policies.length; ++i) {
+                if (!(policies[i][2] in cookieValue)) {
+                    cookieValue[policies[i][2]] = [];
+                }
+                cookieValue[policies[i][2]].push(policies[i][1]);
+            }
+
             console.log(`${subject}: ${policies}`);
+            console.log(`cookieValue: ${JSON.stringify(cookieValue)}`);
         } else {
             console.log("No related policies.")
         }
-        res.cookie('CasbinPolicies', policies, {maxAge: 1000});
+        res.cookie('CasbinPolicies', cookieValue, {maxAge: 1000});
         next(); 
     }))
     app.use(express.static(__dirname + '/public'));
