@@ -20,12 +20,13 @@ const cookieParser = require('cookie-parser');
     const port = 3000;
     app.use(cookieParser());
     app.use(function (req, res, next) {
-        var cookie = req.cookies.cookieName;
+        var cookie = req.cookies['123123'];
+        console.log(cookie)
         if (cookie === undefined)
         {
             // no: set a new cookie
             var value = "TestCookieValue";
-            res.cookie('TestCookieKey', value, { maxAge: 900000});
+            res.cookie('123123', value, {maxAge: 1000});
             console.log('cookie created successfully');
         } 
         else
@@ -40,21 +41,8 @@ const cookieParser = require('cookie-parser');
 
 
     app.get('/', (req, res) => {
-        // var cookie = req.cookies.cookieName;
-        // if (cookie === undefined)
-        // {
-        //     // no: set a new cookie
-        //     var value = "TestCookieValue";
-        //     res.cookie('TestCookieKey', value, { maxAge: 900000, httpOnly: true});
-        //     console.log('cookie created successfully');
-        // } 
-        // else
-        // {
-        //     // yes, cookie was already present 
-        //     console.log('cookie exists', cookie);
-        // }
-        res.render('index.html')
-        // res.send('Hello World!');
+        res.sendFile('index.html')
     });
+
     app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 })();
