@@ -37,6 +37,7 @@ const asyncMiddleware = fn => (req, res, next) => {
 
             // Convert the policies into another format
             // [alice,data1,read] => {"read":[data1]}
+            // {act1:[data1, data2], act2:[data3, data4]}
             cookieValue = {};
             for (var i = 0; i < policies.length; ++i) {
                 if (!(policies[i][2] in cookieValue)) {

@@ -41,3 +41,15 @@ function anonymous() {
 
 console.log(`CasbinSubject: ${getCookie('CasbinSubject')}`);
 console.log(`CasbinPolicies: ${getCookie('CasbinPolicies')}`);
+
+policies = JSON.parse(getCookie('CasbinPolicies').slice(2));
+console.log(policies);
+for (var act in policies) {
+    for (var i = 0; i <  policies[act].length; ++i) {
+        var obj = policies[act][i];
+        var eles = document.getElementsByClassName(obj);
+        for (var j = 0; j < eles.length; ++j) {
+            eles[j].hidden = false;
+        }
+    }
+}
