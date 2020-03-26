@@ -29,12 +29,15 @@ const asyncMiddleware = fn => (req, res, next) => {
     const port = 3000;
     app.use(cookieParser());
     app.use(asyncMiddleware(async function (req, res, next) {
+
+        // Get the subject(s)
         var subject = req.cookies['CasbinSubject'];
+
+        // casbin service api: read all the actions and the correspoinding objects of a subject / subjects
         var policies;
         var cookieValue;
         if (subject) {
             policies = await enforcer.getFilteredPolicy(0, subject);
-
             // Convert the policies into another format
             // [alice,data1,read] => {"read":[data1]}
             // {act1:[data1, data2], act2:[data3, data4]}
@@ -51,6 +54,8 @@ const asyncMiddleware = fn => (req, res, next) => {
         } else {
             console.log("No related policies.")
         }
+
+        // Output the result
         res.cookie('CasbinPolicies', cookieValue, {maxAge: 1000});
         next(); 
     }))

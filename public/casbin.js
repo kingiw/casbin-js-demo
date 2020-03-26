@@ -42,8 +42,11 @@ function anonymous() {
 console.log(`CasbinSubject: ${getCookie('CasbinSubject')}`);
 console.log(`CasbinPolicies: ${getCookie('CasbinPolicies')}`);
 
+
+// Casbin.js: Get the actions and objects from backend server (cookies)
 policies = JSON.parse(getCookie('CasbinPolicies').slice(2));
 console.log(policies);
+// Handle all the actions on the objects
 for (var act in policies) {
     for (var i = 0; i <  policies[act].length; ++i) {
         var obj = policies[act][i];
