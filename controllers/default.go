@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/astaxie/beego"
 	"github.com/kingiw/casbin-js-demo/models"
 )
@@ -19,14 +22,26 @@ type response struct {
 }
 
 func (c *MainController) Get() {
-	c.Data["Website"] = "beego.me"
-	c.Data["Email"] = "astaxie@gmail.com"
-	c.TplName = "index.tpl"
+	// c.Data["Website"] = "beego.me"
+	// c.Data["Email"] = "astaxie@gmail.com"
+	// c.TplName = "index.tpl"
+	subject := c.Ctx.GetCookie("CasbinUser")
+	fmt.Println("Subject: ", subject)
+	var profiles interface{}
+	if subject != "" {
+		profiles = models.GetProfiles(subject)
+	}
+	s, err := json.Marshal(profiles)
+	if err != nil {
+		panic(err)
+	}
+	c.Ctx.SetCookie("CasbinProfiles", string(s))
+	c.TplName = "main.tpl"
 }
 
 func (c *APIController) Get() {
 	var resp response
-	resp.Satus = "ok"
+	resp.Status = "ok"
 	resp.Data = models.GetProfiles("alice")
 	c.Data["json"] = resp
 	c.ServeJSON()
