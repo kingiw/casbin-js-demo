@@ -24,42 +24,55 @@ function delCookie(name)
         document.cookie= name + "="+cval+";expires="+exp.toGMTString();
 }
 
-function alice() {
-    setCookie('CasbinUser', 'alice');
-    alert("Alice, refresh the page and see the changes.");
-}
-
-function bob() {
-    setCookie('CasbinUser', 'bob');
-    alert('Bob, refresh the page and see the changes.');
-}
-
-function anonymous() {
-    delCookie('CasbinUser');
-    alert('Anonymous, refresh the page and see the changes.');
-}
-
-
 console.log(`CasbinUser: ${getCookie('CasbinUser')}`);
 console.log(`CasbinProfiles: ${getCookie('CasbinProfiles')}`);
 
 
-// Users can set the handlers for different operations
-handlers = {
-    'read': ele => {ele.hidden = false}
-}
+class Enforcer {
+    constructor(handlers) {
+        this.handlers = handlers;
+        this.profiles = null;
+    }
 
-// Casbin.js: Get the actions and objects from backend server (cookies)
-policies = JSON.parse(getCookie('CasbinProfiles'));
-console.log(policies);
-// Handle all the actions on the objects
-// {act1:[data1, data2], act2:[data3, data4]}
-for (var act in policies) {
-    for (var i = 0; i <  policies[act].length; ++i) {
-        var obj = policies[act][i];
-        var eles = document.getElementsByClassName(obj);
-        for (var j = 0; j < eles.length; ++j) {
-            handlers[act](eles[j]); // Handle all the target DOM elements with handlers.
+    updateProfiles(profiles) {
+        this.actObjProfiles = profiles; // Action-oriented: {act1:[obj1,obj2],act2:[obj2,obj3]}
+        
+        this.objActProfiles = {};  // Object-oriented: {obj1:[act1],obj2:[act1,act2],obj3:[act2]}
+        for (let act in this.actObjProfiles) {
+            this.actObjProfiles[act].forEach(obj => {
+                if (!(obj in this.objActProfiles)) {
+                    this.objActProfiles[obj] = [];
+                } 
+                this.objActProfiles[obj].push(act);
+            })
         }
     }
+    
+    updatePage() {
+        for (let act in this.actObjProfiles) {
+            this.actObjProfiles[act].forEach(obj => {
+                let elems = document.getElementsByClassName(obj);
+                for (let i = 0; i < elems.length; ++i) {
+                    this.handlers[act](elems[i]);
+                }
+            })
+        }
+    }
+    
 }
+
+function getUserProfiles(user) {
+    return fetch(`http://localhost:8080/api/get-profiles?sub=${user.toLowerCase()}`).then(res => res.json());
+}
+
+function userSwitch(user) {
+    getUserProfiles(user).then(res => {
+        let profiles = res.data;
+        enforcer.updateProfiles(profiles);
+        enforcer.updatePage();
+        document.getElementById("user").innerHTML = user;
+    })
+}
+
+
+
