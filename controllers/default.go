@@ -41,8 +41,11 @@ func (c *MainController) Get() {
 
 func (c *APIController) Get() {
 	var resp response
+	subject := c.Input().Get("sub")
+	if subject != "" {
+		resp.Data = models.GetProfiles(subject)
+	}
 	resp.Status = "ok"
-	resp.Data = models.GetProfiles("alice")
 	c.Data["json"] = resp
 	c.ServeJSON()
 }
