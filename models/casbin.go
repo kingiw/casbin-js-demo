@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-
 	"github.com/casbin/casbin"
 )
 
@@ -14,12 +12,15 @@ func InitEnforcer() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Casibin enforcer init")
 }
 
 func GetProfiles(subject string) map[string][]string {
-	policies := enforcer.GetFilteredPolicy(0, subject) // [['alice', 'data1', 'read'], ...]
-
+	policies, err := enforcer.GetImplicitPermissionsForUser(subject)
+	if err != nil {
+		panic(err)
+	}
+	// Refactor the structure of the policies
+	// Arrays of policies => User profiles
 	profile := make(map[string][]string)
 	for i := 0; i < len(policies); i++ {
 		profile[policies[i][2]] = append(profile[policies[i][2]], policies[i][1])

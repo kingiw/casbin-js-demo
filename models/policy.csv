@@ -1,2 +1,6 @@
-p,alice,data1,read
-p,bob,data2,read
+p,admin_group,admin_data,allow
+p,user_group,user_data,allow
+g,admin,admin_group
+g,admin,user_group
+g,alice,user_group
+g,bob,user_group

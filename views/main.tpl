@@ -13,19 +13,19 @@
     <h1>DEMO</h1>
     
     <div>
-        <p>Now you are <span id="user">Guest</span></p>
+        <p>Now you are <span id="user">Guest. You cannot create any posts.</span></p>
         <p>Click the button to switch your account</p>
-        <button onclick="userSwitch('Admin')">Admin</button>
-        <button onclick="userSwitch('Alice')">Alice</button>
-        <button onclick="userSwitch('Bob')">Bob</button>
-        <button onclick="userSwitch('Guest')">Guest</button>
+        <button onclick="userChange('Admin')">Admin</button>
+        <button onclick="userChange('Alice')">Alice</button>
+        <button onclick="userChange('Bob')">Bob</button>
+        <button onclick="userChange('Guest')">Guest</button>
     </div>
     <div>
-        <button onclick="createPost()">Create</button>
+        <button onclick="createPost()" class="user_data" hidden>Create</button>
     </div>
 
     <h2>Posts</h2>
-    <div id="posts"></div>
+    <div id="board"></div>
 </body>
 </html>
 
