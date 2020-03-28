@@ -27,6 +27,7 @@ class Enforcer {
             || `${location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '')}/api/get-profiles`;
         this.handlers = handlers;
         this.profiles = null;
+        this.user = null;
     }
 
     // For communication with the server with a casbin api
@@ -36,6 +37,13 @@ class Enforcer {
             let profiles = res.data;
             this.updateProfiles(profiles);
         })
+    }
+
+    _updatePage() {
+        let elems = document.getElementsByClassName("casbin");
+        for (let i = 0; i < elems.length; ++i) {
+            this.updateElement(elems[i]);
+        }
     }
     
     updateProfiles(profiles) {
@@ -52,16 +60,31 @@ class Enforcer {
     }
 
     updatePage(user) {
-        this._getUserProfiles(user).then(res => {
-            for (let act in this.actObjProfiles) {
-                this.actObjProfiles[act].forEach(obj => {
-                    let elems = document.getElementsByClassName(obj);
-                    for (let i = 0; i < elems.length; ++i) {
-                        this.handlers[act](elems[i]);
-                    }
-                })
+        // User identity is changed
+        if (user != this.user) {
+            this.user = user;
+            this._getUserProfiles(user).then(res => {
+                this._updatePage();
+            })
+        } else {
+            this._updatePage();
+        }
+    }
+
+    updateElement(element) {
+        let classes = element.className.split(' ');
+        let updated = false;
+        classes.forEach(className => {
+            if (className in this.objActProfiles) {
+                this.objActProfiles[className].forEach(act => {
+                    handlers[act][0](element);
+                });
+                updated = true;
             }
         })
+        if (!updated) {
+            handlers['allow'][1](element);
+        }
     }
 }
 

@@ -13,15 +13,15 @@
     <h1>DEMO</h1>
     
     <div>
-        <p>Now you are <span id="user">Guest. You cannot create any posts.</span></p>
-        <p>Click the button to switch your account</p>
+        <p>Now you are <span id="user">Guest.</span></p>
+        <p>Click the button to change your identity.</p>
         <button onclick="userChange('Admin')">Admin</button>
         <button onclick="userChange('Alice')">Alice</button>
         <button onclick="userChange('Bob')">Bob</button>
         <button onclick="userChange('Guest')">Guest</button>
     </div>
     <div>
-        <button onclick="createPost()" class="user_data" hidden>Create</button>
+        <button onclick="createPost()" class="casbin user_data" hidden>Create a Post</button>
     </div>
 
     <h2>Posts</h2>

@@ -1,6 +1,9 @@
-// Users can set the handlers for different operations
+// Users can set the handlers for different actions
+// Note that each action correspond to a function array with two functions
+// The first element in the array is the handler when the actions is met
+// The second element is the handler when the actions isn't met.
 let handlers = {
-    'allow': ele => {ele.hidden = false}
+    'allow': [ele => {ele.hidden = false}, ele => {ele.hidden = true}]
 }
 
 let enforcer = new Enforcer(handlers);
@@ -24,6 +27,7 @@ function createPost() {
     deleteBtn.hidden = true;
     // Set the element to be specific object by assigning a class name to it
     // It means only those who have access to "admin_data" can see the element. 
+    deleteBtn.classList.add(`casbin`);
     deleteBtn.classList.add(`admin_data`);
 
     // deletePostFunc()
@@ -31,21 +35,23 @@ function createPost() {
         let post = this.parentNode;
         post.parentNode.removeChild(post);
     }
+    // Explicitly call enforcer.updateElement when some elements are added.
+    
+
     post.appendChild(p);
     post.appendChild(deleteBtn);
 
     let board = document.getElementById("board");
     board.insertBefore(post, board.children[0]);
+    enforcer.updatePage(globalUser);
 }
 
 // When the user identity changes.
 function userChange(user) {
-    
-    // Call casbin enforcer to update the page.
-    enforcer.updatePage(user);
-    // User customized the page status and DOM element;
     globalUser = user;
     document.getElementById("user").innerHTML = globalUser;
+    // Call casbin enforcer to update the page.
+    enforcer.updatePage(user);
 }
 
 window.onload = () => {
