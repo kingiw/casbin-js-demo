@@ -18,12 +18,13 @@ Casbin is an authentication library. Its support for diverse programming languag
 
 2. Develop a Javascript library (aka Casbin.js) to provide the powerful but foolproof functionalities to control the properties like the visibility of UX widgets, dynamic routers and private data accessibillity at the frontend. 
 
-<center>
+<div align=center>
 
-![Schema](./figure/schema.png)
+![Basic Schema](./figure/schema.png)
+
 Basic Schema
 
-</center>
+</div>
 3. Design out-of-the-box Casbin components in prevalent frontend frameworks including React, Vue.js, Angular.js.
 
 ```jsx
@@ -63,8 +64,8 @@ Temporarily I wrote a [demo](https://github.com/kingiw/casbin-js-demo) for Casbi
 3. Finsh the documentation.
 
 #### August 1 - August 31 (Before the Final Evaluation)
-1. Continue with the unfinished tasks and improvement of the project.
-2. (If available) pay attention to other Casbin project.  
+1. This period is for any unpredictable delay and the implementation of any new ideas in this project.
+2. (If available) Contribute to other Casvbin project.  
 
 #### After GSoC
 I will continue maintaining the project after the end of GSoC. Hopefully I can be a member of Casbin Organization and get actively involved in the open source community.
